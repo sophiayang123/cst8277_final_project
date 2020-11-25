@@ -11,15 +11,22 @@ package com.algonquincollege.cst8277.models;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 
 /**
  * Abstract class that is base of (class) hierarchy for all c.a.cst8277.models @Entity classes
  */
 @MappedSuperclass
+@Access(AccessType.PROPERTY) // NOTE: by using this annotations, any annotation on a field is ignored without warning
+@EntityListeners({PojoListener.class})
 public abstract class PojoBase implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -37,6 +44,7 @@ public abstract class PojoBase implements Serializable {
         this.id = id;
     }
 
+    @Column(name="CREATED")
     public LocalDateTime getCreatedDate() {
         return created;
     }
@@ -44,6 +52,7 @@ public abstract class PojoBase implements Serializable {
         this.created = created;
     }
 
+    @Column(name="UPDATED")
     public LocalDateTime getUpdatedDate() {
         return updated;
     }
@@ -51,6 +60,7 @@ public abstract class PojoBase implements Serializable {
         this.updated = updated;
     }
 
+    @Version
     public int getVersion() {
         return version;
     }

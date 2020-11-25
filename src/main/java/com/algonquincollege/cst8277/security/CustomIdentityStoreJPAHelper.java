@@ -20,8 +20,10 @@ import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import javax.transaction.Transactional;
 
 import com.algonquincollege.cst8277.models.SecurityRole;
@@ -32,21 +34,24 @@ import com.algonquincollege.cst8277.models.SecurityUser;
  */
 @Singleton
 public class CustomIdentityStoreJPAHelper {
-    
-    @PersistenceContext(name=PU_NAME)
+    public static final String CUSTOMER_PU = "20f-groupProject-PU";
+    @PersistenceContext(name=CUSTOMER_PU)
     protected EntityManager em;
     
-//    public static EntityManagerFactory emf;
-    
     @Inject
+    protected Pbkdf2PasswordHash pbAndjPasswordHash;
+
     public SecurityUser findUserByName(String username) {
         SecurityUser user = null;
 //        em = emf.createEntityManager();
         try {
             //TODO actually use db
+            TypedQuery<SecurityUser> query = em.createNamedQuery(SECURITY_USER_BY_NAME_QUERY, SecurityUser.class);
+            query.setParameter(PARAM1, username);
+            user = query.getSingleResult();
         }
         catch (Exception e) {
-            //e.printStackTrace();
+//            e.printStackTrace();
         }
         return user;
     }
@@ -63,10 +68,20 @@ public class CustomIdentityStoreJPAHelper {
     @Transactional
     public void saveSecurityUser(SecurityUser user) {
         //TODO
+        SecurityUser addUser = new SecurityUser();
+        addUser.setPwHash(user.getPwHash());
+        addUser.setRoles(user.getRoles());
+        addUser.setUsername(addUser.getUsername());
+        addUser.setCustomer(user.getCustomer());
+        em.persist(addUser);
     }
 
     @Transactional
     public void saveSecurityRole(SecurityRole role) {
         //TODO
+        SecurityRole addRole = new SecurityRole();
+        addRole.setRoleName(role.getRoleName());
+        addRole.setUsers(role.getUsers());
+        em.persist(addRole);
     }
 }

@@ -10,10 +10,26 @@ package com.algonquincollege.cst8277.models;
 
 import java.io.Serializable;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 /**
 *
 * Description: model for the OrderLine object
 */
+@Entity(name="OrderLine")
+@Table(name="ORDERLINE")
+@Access(AccessType.PROPERTY)
 public class OrderLinePojo implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -26,6 +42,7 @@ public class OrderLinePojo implements Serializable {
     public OrderLinePojo() {
     }
 
+    @EmbeddedId
     public OrderLinePk getPk() {
         return primaryKey;
     }
@@ -33,6 +50,10 @@ public class OrderLinePojo implements Serializable {
         this.primaryKey = primaryKey;
     }
     
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "OWNING_ORDER_ID")
+    @MapsId("owningOrderId")
     public OrderPojo getOwningOrder() {
         return owningOrder;
     }
@@ -40,6 +61,7 @@ public class OrderLinePojo implements Serializable {
         this.owningOrder = owningOrder;
     }
 
+    @Column(name="AMOUNT")
     public Double getAmount() {
         return amount;
     }
@@ -47,6 +69,9 @@ public class OrderLinePojo implements Serializable {
         this.amount = amount;
     }
 
+    @OneToOne// @OneToOne annotation needs @JoinColumnsince JPA
+    // typically 'guesses' column name wrong based on property name@JoinColumn(name="ADDR_ID")
+    @JoinColumn(name="PRODUCT_ID")
     public ProductPojo getProduct() {
         return product;
     }

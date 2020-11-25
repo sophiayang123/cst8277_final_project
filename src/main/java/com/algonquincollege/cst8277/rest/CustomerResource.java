@@ -50,6 +50,7 @@ import com.algonquincollege.cst8277.models.SecurityUser;
 @Produces(MediaType.APPLICATION_JSON)
 public class CustomerResource {
 
+    @EJB
     protected CustomerService customerServiceBean;
 
     @Inject
@@ -58,6 +59,7 @@ public class CustomerResource {
     @Inject
     protected SecurityContext sc;
 
+    @GET
     public Response getCustomers() {
         servletContext.log("retrieving all customers ...");
         List<CustomerPojo> custs = customerServiceBean.getAllCustomers();
@@ -65,6 +67,9 @@ public class CustomerResource {
         return response;
     }
 
+    @GET
+    @RolesAllowed({ADMIN_ROLE,USER_ROLE})
+    @Path(RESOURCE_PATH_ID_PATH)
     public Response getCustomerById(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
         servletContext.log("try to retrieve specific customer " + id);
         Response response = null;
@@ -101,6 +106,9 @@ public class CustomerResource {
       return response;
     }
 
+    @PUT
+    @RolesAllowed({ADMIN_ROLE,USER_ROLE})
+    @Path(CUSTOMER_ADDRESS_RESOURCE_PATH)
     public Response addAddressForCustomer(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id, AddressPojo newAddress) {
       Response response = null;
       CustomerPojo updatedCustomer = customerServiceBean.setAddressFor(id, newAddress);

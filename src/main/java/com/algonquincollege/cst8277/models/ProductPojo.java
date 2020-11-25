@@ -12,6 +12,14 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -19,6 +27,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 *
 * Description: model for the Product object
 */
+@Entity(name = "Product")
+@Table(name = "PRODUCT")
+@Access(AccessType.PROPERTY)
+@AttributeOverride(name = "id", column = @Column(name="PRODUCT_ID"))
 public class ProductPojo extends PojoBase implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -33,6 +45,7 @@ public class ProductPojo extends PojoBase implements Serializable {
     /**
      * @return the value for firstName
      */
+    @Column(name="DESCRIPTION")
     public String getDescription() {
         return description;
     }
@@ -43,6 +56,7 @@ public class ProductPojo extends PojoBase implements Serializable {
         this.description = description;
     }
 
+    @Column(name="SERIALNUMBER")
     public String getSerialNo() {
         return serialNo;
     }
@@ -51,6 +65,7 @@ public class ProductPojo extends PojoBase implements Serializable {
     }
     
     @JsonInclude(Include.NON_NULL)
+    @ManyToMany(mappedBy = "products")
     public Set<StorePojo> getStores() {
         return stores;
     }

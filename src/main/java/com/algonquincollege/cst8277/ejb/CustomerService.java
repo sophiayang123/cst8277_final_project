@@ -22,6 +22,7 @@ import static com.algonquincollege.cst8277.utils.MyConstants.PROPERTY_ITERATIONS
 import static com.algonquincollege.cst8277.utils.MyConstants.PROPERTY_KEYSIZE;
 import static com.algonquincollege.cst8277.utils.MyConstants.PROPERTY_SALTSIZE;
 import static com.algonquincollege.cst8277.utils.MyConstants.USER_ROLE;
+import static com.algonquincollege.cst8277.models.CustomerPojo.ALL_CUSTOMERS_QUERY_NAME;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -55,7 +56,7 @@ import com.algonquincollege.cst8277.models.StorePojo;
 public class CustomerService implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    public static final String CUSTOMER_PU = "acmeCustomers-PU";
+    public static final String CUSTOMER_PU = "20f-groupProject-PU";
 
     @PersistenceContext(name = CUSTOMER_PU)
     protected EntityManager em;
@@ -66,7 +67,7 @@ public class CustomerService implements Serializable {
     //TODO
 
     public List<CustomerPojo> getAllCustomers() {
-        return null;
+        return em.createQuery(ALL_CUSTOMERS_QUERY_NAME, CustomerPojo.class).getResultList();
     }
 
     public CustomerPojo getCustomerById(int custPK) {

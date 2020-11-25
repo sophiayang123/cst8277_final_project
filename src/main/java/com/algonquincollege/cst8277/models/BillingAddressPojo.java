@@ -10,6 +10,12 @@ package com.algonquincollege.cst8277.models;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
+@Entity(name="billingAddr")
+@DiscriminatorValue(value="B")
 public class BillingAddressPojo extends AddressPojo implements Serializable {
     /** explicit set serialVersionUID */
     private static final long serialVersionUID = 1L;
@@ -20,6 +26,7 @@ public class BillingAddressPojo extends AddressPojo implements Serializable {
     public BillingAddressPojo() {
     }
 
+    @Column(name="ALSOSHIPPING")
     public boolean isAlsoShipping() {
         return isAlsoShipping;
     }

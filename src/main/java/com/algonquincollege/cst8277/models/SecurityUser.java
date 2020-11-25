@@ -9,9 +9,26 @@
 package com.algonquincollege.cst8277.models;
 
 import java.io.Serializable;
+import static com.algonquincollege.cst8277.models.SecurityUser.SECURITY_USER_BY_NAME_QUERY;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.algonquincollege.cst8277.rest.SecurityRoleSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,6 +40,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * User class used for (JSR-375) Java EE Security authorization/authentication
  */
 
+@Entity(name="SecurityUser")
+@Table(name="SECURITY_USER")
+@Access(AccessType.PROPERTY)
+//@NamedQuery(name = "userByName", query = "select n from SecurityUser n where n.username = ?")
+@NamedQueries(
+    @NamedQuery(name= SECURITY_USER_BY_NAME_QUERY, query = "select su from SecurityUser su where su.username =:param1")
+)
 public class SecurityUser implements Serializable, Principal {
     /** explicit set serialVersionUID */
     private static final long serialVersionUID = 1L;
@@ -42,6 +66,9 @@ public class SecurityUser implements Serializable, Principal {
         super();
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="USER_ID")
     public int getId() {
         return id;
     }
@@ -49,6 +76,7 @@ public class SecurityUser implements Serializable, Principal {
         this.id = id;
     }
 
+    @Column(name="username")
     public String getUsername() {
         return username;
     }
@@ -66,6 +94,10 @@ public class SecurityUser implements Serializable, Principal {
     
     @JsonInclude(Include.NON_NULL)
     @JsonSerialize(using = SecurityRoleSerializer.class)
+    @ManyToMany(targetEntity = SecurityRole.class, cascade = CascadeType.PERSIST)
+    @JoinTable(name="SECURITY_USER_SECURITY_ROLE",
+      joinColumns=@JoinColumn(name="USER_ID", referencedColumnName="USER_ID"),
+      inverseJoinColumns=@JoinColumn(name="ROLE_ID", referencedColumnName="ROLE_ID"))
     public Set<SecurityRole> getRoles() {
         return roles;
     }
@@ -73,6 +105,8 @@ public class SecurityUser implements Serializable, Principal {
         this.roles = roles;
     }
 
+    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
+    @JoinColumn(name="CUST_ID")
     public CustomerPojo getCustomer() {
         return cust;
     }

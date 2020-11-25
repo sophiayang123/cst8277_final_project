@@ -14,5 +14,15 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 public class PojoListener {
+    @PrePersist
+    public void setCreatedOnDate(PojoBase pojo) {
+        LocalDateTime now = LocalDateTime.now();
+        pojo.setCreatedDate(now);
+        pojo.setUpdatedDate(now);
+    }
 
+    @PreUpdate
+    public void setUpdatedDate(PojoBase pojo) {
+        pojo.setUpdatedDate(LocalDateTime.now());
+    }
 }
