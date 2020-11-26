@@ -28,6 +28,7 @@ import javax.security.enterprise.SecurityContext;
 import javax.servlet.ServletContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -66,6 +67,14 @@ public class CustomerResource {
         Response response = Response.ok(custs).build();
         return response;
     }
+    
+//    @POST
+//    public Response addCustomers() {
+//        servletContext.log("adding customer ...");
+//        List<CustomerPojo> custs = customerServiceBean.getAllCustomers();
+//        Response response = Response.ok(custs).build();
+//        return response;
+//    }
 
     @GET
     @RolesAllowed({ADMIN_ROLE,USER_ROLE})
@@ -107,7 +116,7 @@ public class CustomerResource {
     }
 
     @PUT
-    @RolesAllowed({ADMIN_ROLE,USER_ROLE})
+    @RolesAllowed({ADMIN_ROLE})
     @Path(CUSTOMER_ADDRESS_RESOURCE_PATH)
     public Response addAddressForCustomer(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id, AddressPojo newAddress) {
       Response response = null;
@@ -116,6 +125,22 @@ public class CustomerResource {
       return response;
     }
     
+    @DELETE
+    @RolesAllowed({ADMIN_ROLE})
+    @Path(RESOURCE_PATH_ID_PATH)
+    public Response deleteCustomer(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
+        boolean result = customerServiceBean.deleteCustomer(id);
+
+        if(result) {
+            return Response.ok().status(Response.Status.NO_CONTENT).build();
+        }else {
+            return Response.notModified().build();
+        }
+    }
+    
+    
     //TODO - endpoints for setting up Orders/OrderLines
 
+    
+    
 }

@@ -43,7 +43,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Entity(name="SecurityUser")
 @Table(name="SECURITY_USER")
 @Access(AccessType.PROPERTY)
-//@NamedQuery(name = "userByName", query = "select n from SecurityUser n where n.username = ?")
 @NamedQueries(
     @NamedQuery(name= SECURITY_USER_BY_NAME_QUERY, query = "select su from SecurityUser su where su.username =:param1")
 )

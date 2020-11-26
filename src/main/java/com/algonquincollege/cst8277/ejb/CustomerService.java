@@ -10,6 +10,7 @@
 package com.algonquincollege.cst8277.ejb;
 
 import static com.algonquincollege.cst8277.models.SecurityRole.ROLE_BY_NAME_QUERY;
+import static com.algonquincollege.cst8277.models.SecurityUser.SECURITY_USER_BY_NAME_QUERY;
 import static com.algonquincollege.cst8277.utils.MyConstants.DEFAULT_KEY_SIZE;
 import static com.algonquincollege.cst8277.utils.MyConstants.DEFAULT_PROPERTY_ALGORITHM;
 import static com.algonquincollege.cst8277.utils.MyConstants.DEFAULT_PROPERTY_ITERATIONS;
@@ -22,7 +23,9 @@ import static com.algonquincollege.cst8277.utils.MyConstants.PROPERTY_ITERATIONS
 import static com.algonquincollege.cst8277.utils.MyConstants.PROPERTY_KEYSIZE;
 import static com.algonquincollege.cst8277.utils.MyConstants.PROPERTY_SALTSIZE;
 import static com.algonquincollege.cst8277.utils.MyConstants.USER_ROLE;
+
 import static com.algonquincollege.cst8277.models.CustomerPojo.ALL_CUSTOMERS_QUERY_NAME;
+import static com.algonquincollege.cst8277.models.CustomerPojo.FIND_CUSTOMERS_BY_ID_QUERY;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -43,11 +46,15 @@ import javax.transaction.Transactional;
 
 import com.algonquincollege.cst8277.models.AddressPojo;
 import com.algonquincollege.cst8277.models.CustomerPojo;
+import com.algonquincollege.cst8277.models.OrderPojo;
+import com.algonquincollege.cst8277.models.OrderPojo_;
 import com.algonquincollege.cst8277.models.ProductPojo;
+import com.algonquincollege.cst8277.models.ProductPojo_;
 import com.algonquincollege.cst8277.models.SecurityRole;
 import com.algonquincollege.cst8277.models.SecurityUser;
 import com.algonquincollege.cst8277.models.ShippingAddressPojo;
 import com.algonquincollege.cst8277.models.StorePojo;
+import com.algonquincollege.cst8277.models.StorePojo_;
 
 /**
  * Stateless Singleton Session Bean - CustomerService
@@ -67,11 +74,22 @@ public class CustomerService implements Serializable {
     //TODO
 
     public List<CustomerPojo> getAllCustomers() {
-        return em.createQuery(ALL_CUSTOMERS_QUERY_NAME, CustomerPojo.class).getResultList();
+        return em.createNamedQuery(ALL_CUSTOMERS_QUERY_NAME, CustomerPojo.class).getResultList();
     }
 
     public CustomerPojo getCustomerById(int custPK) {
-        return null;
+        CustomerPojo cust = null;
+        try {
+            //TODO actually use db
+            cust = em.createNamedQuery(FIND_CUSTOMERS_BY_ID_QUERY, CustomerPojo.class)
+            .setParameter(custPK, PARAM1)
+            .getSingleResult();
+            return cust;
+        }
+        catch (Exception e) {
+//            e.printStackTrace();
+            return null;
+        }
     }
     
     @Transactional
@@ -111,6 +129,24 @@ public class CustomerService implements Serializable {
         em.merge(updatedCustomer);
         return updatedCustomer;
     }
+ 
+    @Transactional
+    public boolean deleteCustomer(int custId) {
+        CustomerPojo cust = em.find(CustomerPojo.class, custId);
+        boolean flag = false;
+        try {
+            if(cust != null) {
+                em.remove(cust);
+                flag= true;
+            }
+            return flag;
+            
+        }catch(Exception e){
+            
+            flag= false;
+            return flag;
+        }
+    }
 
     public List<ProductPojo> getAllProducts() {
         //example of using JPA Criteria query instead of JPQL
@@ -129,15 +165,50 @@ public class CustomerService implements Serializable {
     }
 
     public ProductPojo getProductById(int prodId) {
-        return null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<ProductPojo> q1 = cb.createQuery(ProductPojo.class);
+            Root<ProductPojo> root = q1.from(ProductPojo.class);
+            q1.where(cb.equal((root.get(ProductPojo_.id)),prodId));
+            
+            TypedQuery<ProductPojo> tq = em.createQuery(q1);
+            ProductPojo product = tq.getSingleResult();
+            return product;
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     public List<StorePojo> getAllStores() {
-        return null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<StorePojo> q = cb.createQuery(StorePojo.class);
+            Root<StorePojo> c = q.from(StorePojo.class);
+            q.select(c);
+            TypedQuery<StorePojo> q2 = em.createQuery(q);
+            List<StorePojo> allStores = q2.getResultList();
+            return allStores;
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     public StorePojo getStoreById(int id) {
-        return null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<StorePojo> q1 = cb.createQuery(StorePojo.class);
+            Root<StorePojo> root = q1.from(StorePojo.class);
+            q1.where(cb.equal((root.get(StorePojo_.id)),id));
+            
+            TypedQuery<StorePojo> tq = em.createQuery(q1);
+            StorePojo product = tq.getSingleResult();
+            return product;
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
     
     /*
@@ -145,5 +216,35 @@ public class CustomerService implements Serializable {
     public OrderPojo getAllOrders ... getOrderbyId ... build Orders with OrderLines ...
      
     */
+    public List<OrderPojo> getAllOrders() {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<OrderPojo> q = cb.createQuery(OrderPojo.class);
+            Root<OrderPojo> c = q.from(OrderPojo.class);
+            q.select(c);
+            TypedQuery<OrderPojo> q2 = em.createQuery(q);
+            List<OrderPojo> allOrders = q2.getResultList();
+            return allOrders;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+    
+    public OrderPojo getOrderById(int orderId) {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<OrderPojo> q1 = cb.createQuery(OrderPojo.class);
+            Root<OrderPojo> root = q1.from(OrderPojo.class);
+            q1.where(cb.equal((root.get(OrderPojo_.id)), orderId));
+            
+            TypedQuery<OrderPojo> tq = em.createQuery(q1);
+            OrderPojo order = tq.getSingleResult();
+            return order;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
 
 }

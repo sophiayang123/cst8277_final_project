@@ -71,7 +71,7 @@ public class CustomIdentityStoreJPAHelper {
         SecurityUser addUser = new SecurityUser();
         addUser.setPwHash(user.getPwHash());
         addUser.setRoles(user.getRoles());
-        addUser.setUsername(addUser.getUsername());
+        addUser.setUsername(user.getUsername());
         addUser.setCustomer(user.getCustomer());
         em.persist(addUser);
     }

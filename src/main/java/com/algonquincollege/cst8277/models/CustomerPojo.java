@@ -18,6 +18,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -26,6 +27,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import static com.algonquincollege.cst8277.models.CustomerPojo.ALL_CUSTOMERS_QUERY_NAME;
+import static com.algonquincollege.cst8277.models.CustomerPojo.FIND_CUSTOMERS_BY_ID_QUERY;
 /**
 *
 * Description: model for the Customer object
@@ -34,11 +36,15 @@ import static com.algonquincollege.cst8277.models.CustomerPojo.ALL_CUSTOMERS_QUE
 @Table(name = "CUSTOMER")
 @Access(AccessType.PROPERTY)
 @AttributeOverride(name = "id", column = @Column(name="CUST_ID"))
-@NamedQuery(name=ALL_CUSTOMERS_QUERY_NAME, query = "select c from Customer c")
+@NamedQueries({
+    @NamedQuery(name=ALL_CUSTOMERS_QUERY_NAME, query = "select c from Customer c"),
+    @NamedQuery(name=FIND_CUSTOMERS_BY_ID_QUERY, query= "select c from Customer c where c.id = :param1")
+})
 public class CustomerPojo extends PojoBase implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public static final String ALL_CUSTOMERS_QUERY_NAME = "allCustomers";
+    public static final String FIND_CUSTOMERS_BY_ID_QUERY = "findCustomer";
 
     protected String firstName;
     protected String lastName;
