@@ -54,7 +54,7 @@ public abstract class AddressPojo extends PojoBase implements Serializable {
     protected String country;
     protected String postal;
     protected String state;
-//    protected String addrType;
+    protected String addrType;
 
     /**
      * JPA requires each @Entity class have a default constructor
@@ -63,14 +63,14 @@ public abstract class AddressPojo extends PojoBase implements Serializable {
         super();
     }
 
-//    @Column(name = "ADDR_TYPE")
-//    public String getAddrType() {
-//        return addrType;
-//    }
-//
-//    public void setAddrType(String addrType) {
-//        this.addrType = addrType;
-//    }
+    @Column(name = "ADDR_TYPE")
+    public String getAddrType() {
+        return addrType;
+    }
+
+    public void setAddrType(String addrType) {
+        this.addrType = addrType;
+    }
 
     @Column(name = "CITY")
     public String getCity() {
