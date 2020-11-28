@@ -24,6 +24,7 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.security.enterprise.SecurityContext;
 import javax.servlet.ServletContext;
 import javax.transaction.Transactional;
@@ -44,6 +45,9 @@ import org.glassfish.soteria.WrappingCallerPrincipal;
 import com.algonquincollege.cst8277.ejb.CustomerService;
 import com.algonquincollege.cst8277.models.AddressPojo;
 import com.algonquincollege.cst8277.models.CustomerPojo;
+import com.algonquincollege.cst8277.models.OrderLinePojo;
+import com.algonquincollege.cst8277.models.OrderPojo;
+import com.algonquincollege.cst8277.models.ProductPojo;
 import com.algonquincollege.cst8277.models.SecurityUser;
 
 @Path(CUSTOMER_RESOURCE_NAME)
@@ -121,6 +125,9 @@ public class CustomerResource {
     public Response addAddressForCustomer(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id, AddressPojo newAddress) {
       Response response = null;
       CustomerPojo updatedCustomer = customerServiceBean.setAddressFor(id, newAddress);
+    //  CustomerPojo updatedCustomer = customerServiceBean.set
+
+      
       response = Response.ok(updatedCustomer).build();
       return response;
     }
@@ -139,8 +146,181 @@ public class CustomerResource {
     }
     
     
+    
+
+    
+    
     //TODO - endpoints for setting up Orders/OrderLines
 
+    
+    
+    @GET
+    public Response getOrder() {
+        servletContext.log("retrieving all orders ...");
+        List<OrderPojo> or = customerServiceBean.getAllOrders();
+        Response response = Response.ok(or).build();
+        return response;
+    }
+    
+    
+    
+    @GET
+    @RolesAllowed({ADMIN_ROLE,USER_ROLE})
+    @Path(RESOURCE_PATH_ID_PATH)
+    public Response getOrderById(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
+        servletContext.log("try to retrieve specific order " + id);
+        OrderPojo or = customerServiceBean.getOrderById(id);
+        Response response = Response.ok(or).build();
+        return response;
+     
+    }
+    
+    
+    @DELETE
+    @RolesAllowed({ADMIN_ROLE})
+    @Path(RESOURCE_PATH_ID_PATH)
+    public Response deleteOrder(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
+        boolean result = customerServiceBean.deleteOrder(id);
+
+        if(result) {
+            return Response.ok().status(Response.Status.NO_CONTENT).build();
+        }else {
+            return Response.notModified().build();
+        }
+    }
+    
+    @PUT
+    @RolesAllowed(ADMIN_ROLE)
+    public Response updateOrder(OrderPojo or) {
+        try {
+            OrderPojo updated = customerServiceBean.updateOrder(or);
+            return Response.ok().entity(updated).build();
+        }
+        catch (NoResultException ex) {
+            return Response.status(409).build();
+        }
+    }
+    
+    @POST
+    @RolesAllowed(ADMIN_ROLE)
+    public Response createOrder(OrderPojo or) {
+        customerServiceBean.createOrder(or);
+        return Response.ok().entity(or).build();
+    }
+    
+    
+    
+    
+    @GET
+    public Response getOrderLine() {
+        servletContext.log("retrieving all orderline ...");
+        List<OrderLinePojo> or = customerServiceBean.getAllOrderLine();
+        Response response = Response.ok(or).build();
+        return response;
+    }
+
+
+
+    @GET
+    @RolesAllowed({ADMIN_ROLE,USER_ROLE})
+    @Path(RESOURCE_PATH_ID_PATH)
+    public Response getOrderLineById(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
+        servletContext.log("try to retrieve specific orderline " + id);
+        OrderLinePojo or = customerServiceBean.getOrderLineById(id);
+        Response response = Response.ok(or).build();
+        return response;
+
+    }
+    
+    @DELETE
+    @RolesAllowed({ADMIN_ROLE})
+    @Path(RESOURCE_PATH_ID_PATH)
+    public Response deleteOrderLine(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id) {
+        boolean result = customerServiceBean.deleteOrderLine(id);
+
+        if(result) {
+            return Response.ok().status(Response.Status.NO_CONTENT).build();
+        }else {
+            return Response.notModified().build();
+        }
+    }
+    
+
+    @PUT
+    @RolesAllowed(ADMIN_ROLE)
+    public Response updateOrderLines(OrderLinePojo or) {
+        try {
+            OrderLinePojo updated = customerServiceBean.updateOrderLine(or);
+            return Response.ok().entity(updated).build();
+        }
+        catch (NoResultException ex) {
+            return Response.status(409).build();
+        }
+    }
+    
+    
+    @POST
+    @RolesAllowed(ADMIN_ROLE)
+    public Response createOrderLine(OrderLinePojo or) {
+        customerServiceBean.createOrderLine(or);
+        return Response.ok().entity(or).build();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 }

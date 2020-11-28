@@ -46,6 +46,8 @@ import javax.transaction.Transactional;
 
 import com.algonquincollege.cst8277.models.AddressPojo;
 import com.algonquincollege.cst8277.models.CustomerPojo;
+import com.algonquincollege.cst8277.models.OrderLinePojo;
+import com.algonquincollege.cst8277.models.OrderLinePojo_;
 import com.algonquincollege.cst8277.models.OrderPojo;
 import com.algonquincollege.cst8277.models.OrderPojo_;
 import com.algonquincollege.cst8277.models.ProductPojo;
@@ -246,5 +248,126 @@ public class CustomerService implements Serializable {
             return null;
         }
     }
+    
+    
+    
+    
+    
+    
+    public List<OrderLinePojo> getAllOrderLine() {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<OrderLinePojo> q = cb.createQuery(OrderLinePojo.class);
+            Root<OrderLinePojo> c = q.from(OrderLinePojo.class);
+            q.select(c);
+            TypedQuery<OrderLinePojo> q2 = em.createQuery(q);
+            List<OrderLinePojo> allOrderLines = q2.getResultList();
+            return allOrderLines;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+    
+    public OrderLinePojo getOrderLineById(int orderLineId) {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<OrderLinePojo> q1 = cb.createQuery(OrderLinePojo.class);
+            Root<OrderLinePojo> root = q1.from(OrderLinePojo.class);
+            q1.where(cb.equal((root.get(OrderLinePojo_.pk)), orderLineId));
+            
+            TypedQuery<OrderLinePojo> tq = em.createQuery(q1);
+            OrderLinePojo order = tq.getSingleResult();
+            return order;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+    
+    
+    
+    
+    @Transactional
+    public boolean deleteOrder(int orderId) {
+        OrderPojo or = em.find(OrderPojo.class, orderId);
+        boolean flag = false;
+        try {
+            if(or != null) {
+                em.remove(or);
+                flag= true;
+            }
+            return flag;
+            
+        }catch(Exception e){
+            
+            flag= false;
+            return flag;
+        }
+    }
+    
+    
+    
+    @Transactional
+    public boolean deleteOrderLine(int orderLineId) {
+        OrderLinePojo or = em.find(OrderLinePojo.class, orderLineId);
+        boolean flag = false;
+        try {
+            if(or != null) {
+                em.remove(or);
+                flag= true;
+            }
+            return flag;
+            
+        }catch(Exception e){
+            
+            flag= false;
+            return flag;
+        }
+    }
+    
+    
+    @Transactional
+    public OrderPojo updateOrder(OrderPojo  or) {
+        try {
+            
+            return em.merge(or);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+       
+    }
+    
+    @Transactional
+    public OrderLinePojo updateOrderLine(OrderLinePojo  or) {
+        try {
+            
+            return em.merge(or);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+       
+    }
+    
+    @Transactional
+    public void createOrder(OrderPojo or) {
+        em.persist(or);
+    }
+    
 
+    @Transactional
+    public void createOrderLine(OrderLinePojo or) {
+        em.persist(or);
+    }
+    
+    
+    
+    
+    
+    
+    
 }

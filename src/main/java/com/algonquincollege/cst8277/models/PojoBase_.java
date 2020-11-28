@@ -5,7 +5,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2020-11-23T16:09:13.606-0500")
+@Generated(value="Dali", date="2020-11-23T17:25:41.711-0500")
 @StaticMetamodel(PojoBase.class)
 public class PojoBase_ {
 	public static volatile SingularAttribute<PojoBase, Integer> id;
